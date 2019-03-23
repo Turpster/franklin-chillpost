@@ -52,8 +52,6 @@ namespace Discord_Bot.LoggerNS
         public override string ToString() => Name;
     }   
     
-    
-    
     public class Logger
     {
         public void Log(Level level, string message, Exception exception=null)
@@ -63,7 +61,6 @@ namespace Discord_Bot.LoggerNS
 
             if (exception != null)
             {
-                Log(Level.Error, LoggerFormat.Red + "An " + exception + " exception has occured.\n");
                 Log(Level.Error, LoggerFormat.Red + exception.Message + "\n" + exception.StackTrace);
             }
         }

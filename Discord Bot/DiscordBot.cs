@@ -1,15 +1,24 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using System.Reflection.Emit;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Channels;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using Discord_Bot.CommandNS;
+using Discord_Bot.GuildNS;
 using Discord_Bot.LoggerNS;
+using EventHandler = Discord_Bot.EventNS.EventHandler;
 
 namespace Discord_Bot
 {
     public class DiscordBot
     {
         public BaseSocketClient client;
+        public Executor CommandExecutor;
+        public EventHandler EventHandler;
+        public GuildManager GuildManager;
 
         public static readonly Logger Logger = new Logger();
         
@@ -31,20 +40,18 @@ namespace Discord_Bot
                 token = Console.ReadLine();
             }
 
+//            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) => { Logger.Log(Level.Error, "An error has occured", (Exception) eventArgs.ExceptionObject);};
+            
             DiscordBot bot = new DiscordBot();
             bot.Login(token).GetAwaiter().GetResult();
         }
 
         public DiscordBot()
         {
+            GuildManager = new GuildManager();
             client = new DiscordSocketClient();
-            
-            client.Log += logMessage =>
-            {
-                Logger.Log(Level.LogSeverityToLevel(logMessage.Severity), logMessage.Message, logMessage.Exception);
-                return Task.CompletedTask;
-            };
-            
+            CommandExecutor = new Executor(this);
+            EventHandler = new EventHandler(this);
         }
 
         private async Task Login(string token)
