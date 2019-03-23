@@ -10,6 +10,7 @@ namespace Discord_Bot.GuildNS
         public const string GuildFileDirectory = @"./servers/";
 
         private GuildFile _guildFile;
+        public GuildRankManager RankManager;
 
         public SocketRole NsfwRole
         {
@@ -27,6 +28,7 @@ namespace Discord_Bot.GuildNS
             
             _socketGuild = socketGuild;
             _guildFile = new GuildFile(_socketGuild, GuildFileDirectory + _socketGuild.Id + ".json");
+            RankManager = new GuildRankManager(_guildFile);
         }
     }
 }

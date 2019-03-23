@@ -1,6 +1,4 @@
-using System.ComponentModel;
 using System.IO;
-using System.Runtime.CompilerServices;
 using Discord.WebSocket;
 using Discord_Bot.LoggerNS;
 using Newtonsoft.Json.Linq;
@@ -11,35 +9,39 @@ namespace Discord_Bot
     {
         private readonly string _guildFileLoc;
 
-        SocketGuild _guild;
-        private readonly JObject _rolesFile;
+        protected internal readonly SocketGuild Guild;
+        protected internal readonly JObject ObjGuildFile;
 
         private const string FileTemplate =
             "{\n" +
-            "  \"nsfw_role\": \"\"\n" +
+              "  \"nsfw_role\": \"\",\n" +
+              "  \"ranks\": {\n" +
+              "  },\n" +
+              "  \"users\": {\n" +
+              "  }\n" +
             "}";
         
         protected internal SocketRole NsfwRole
         {
             get
             {
-                string idStr = (string) _rolesFile["nsfw_role"];
+                string idStr = (string) ObjGuildFile["nsfw_role"];
                 if (idStr != "")
                 {
                     ulong id = ulong.Parse(idStr);
-                    return _guild.GetRole(id);
+                    return Guild.GetRole(id);
                 }
                 return null;         
             }
             set
             {
-                if (_rolesFile.ContainsKey("nsfw-role"))
+                if (ObjGuildFile.ContainsKey("nsfw-role"))
                 {
-                    _rolesFile["nsfw_role"] = value.ToString();
+                    ObjGuildFile["nsfw_role"] = value.ToString();
                 }
                 else
                 {
-                    _rolesFile.Add("nsfw_role", value.ToString());
+                    ObjGuildFile.Add("nsfw_role", value.ToString());
                 }
 
                 Save();
@@ -53,19 +55,19 @@ namespace Discord_Bot
                 WriteGuildTemplate(guildFileLoc);
             }
 
-            _guild = socketGuild;
+            Guild = socketGuild;
             _guildFileLoc = guildFileLoc;    
-            _rolesFile = JObject.Parse(File.ReadAllText(_guildFileLoc));
+            ObjGuildFile = JObject.Parse(File.ReadAllText(_guildFileLoc));
         }
 
-        private void Save()
+        protected internal void Save()
         {
             // TODO might be wrong saving this ~ might be appending to the file
             if (!File.Exists(_guildFileLoc))
             {
                 WriteGuildTemplate(_guildFileLoc);
             }
-            File.WriteAllText(_guildFileLoc, _rolesFile.ToString());
+            File.WriteAllText(_guildFileLoc, ObjGuildFile.ToString());
         }
         
         private void WriteGuildTemplate(string fileLoc)

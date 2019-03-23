@@ -22,7 +22,6 @@ namespace Discord_Bot.CommandNS.CommandsNS
 
                     bool hasRole = false;
 
-
                     if (guild.NsfwRole != null)
                     {
                         //Check if user is in NSFW role

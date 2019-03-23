@@ -9,6 +9,7 @@ namespace Discord_Bot.GuildNS
         private List<Guild> _guilds = new List<Guild>();
         public Guild[] Guilds => _guilds.ToArray();
 
+
         public void AddGuild(SocketGuild socketGuild)
         {
             if (!ContainsGuild(socketGuild.Id))

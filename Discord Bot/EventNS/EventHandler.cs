@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord_Bot.CommandNS;
+using Discord_Bot.GuildNS;
 using Discord_Bot.LoggerNS;
 
 namespace Discord_Bot.EventNS
@@ -36,6 +37,34 @@ namespace Discord_Bot.EventNS
                 
                 _discordBot.CommandExecutor.OnCommand(message, command, args.ToArray());
             }
+
+
+            if (message.Author.GetType() == typeof(SocketGuildUser))
+            {
+                SocketGuildUser guildUser = (SocketGuildUser) message.Author;
+                if (!guildUser.IsBot)
+                {
+                    Guild guild = _discordBot.GuildManager.GetGuild(guildUser.Guild);
+
+                    GuildRankManager rankManager = guild.RankManager;
+
+                    SocketRole oldRank = rankManager.GetRank(guild.RankManager.GetUserPoints(guildUser.Id));
+
+                    rankManager.SetRolePoints(guildUser.Id,
+                        guild.RankManager.GetUserPoints(guildUser.Id) + (uint) message.Content.Length);
+
+                    SocketRole newRank = rankManager.GetRank(guild.RankManager.GetUserPoints(guildUser.Id));
+
+                    if (oldRank.Id != newRank.Id)
+                    {
+                        message.Channel.SendMessageAsync($"<@{message.Author.Id}> has been ranked up to {newRank.Name}!");
+                        guildUser.AddRoleAsync(newRank);
+                        guildUser.RemoveRoleAsync(oldRank);
+                    }
+                }
+
+            }
+            
             return Task.CompletedTask;
         }
 

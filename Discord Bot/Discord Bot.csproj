@@ -198,6 +198,7 @@
     <Compile Include="DiscordBot.cs" />
     <Compile Include="EventNS\EventHandler.cs" />
     <Compile Include="GuildNS\GuildFile.cs" />
+    <Compile Include="GuildNS\GuildRankManager.cs" />
     <Compile Include="LoggerNS\Logger.cs" />
     <Compile Include="LoggerNS\LoggerFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -40,7 +40,7 @@ namespace Discord_Bot
                 token = Console.ReadLine();
             }
 
-//            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) => { Logger.Log(Level.Error, "An error has occured", (Exception) eventArgs.ExceptionObject);};
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) => { Logger.Log(Level.Error, "An error has occured", (Exception) eventArgs.ExceptionObject);};
             
             DiscordBot bot = new DiscordBot();
             bot.Login(token).GetAwaiter().GetResult();
