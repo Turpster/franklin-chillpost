@@ -1,7 +1,6 @@
 using System.IO;
 using Discord.WebSocket;
 using Discord_Bot.LoggerNS;
-using Discord_Bot.RolesNS;
 
 namespace Discord_Bot.GuildNS
 {

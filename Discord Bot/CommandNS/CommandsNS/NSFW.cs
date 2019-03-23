@@ -3,7 +3,6 @@ using System.Linq;
 using Discord.Rest;
 using Discord.WebSocket;
 using Discord_Bot.GuildNS;
-using Discord_Bot.RolesNS;
 
 namespace Discord_Bot.CommandNS.CommandsNS
 {

@@ -1,10 +1,11 @@
+using System.ComponentModel;
 using System.IO;
-using System.Net;
+using System.Runtime.CompilerServices;
 using Discord.WebSocket;
 using Discord_Bot.LoggerNS;
 using Newtonsoft.Json.Linq;
 
-namespace Discord_Bot.RolesNS
+namespace Discord_Bot
 {
     public class GuildFile
     {
@@ -12,14 +13,19 @@ namespace Discord_Bot.RolesNS
 
         SocketGuild _guild;
         private readonly JObject _rolesFile;
+
+        private const string FileTemplate =
+            "{\n" +
+            "  \"nsfw_role\": \"\"\n" +
+            "}";
         
         protected internal SocketRole NsfwRole
         {
             get
             {
-                if (_rolesFile.ContainsKey("nsfw_role"))
+                string idStr = (string) _rolesFile["nsfw_role"];
+                if (idStr != "")
                 {
-                    string idStr = (string) _rolesFile["nsfw_role"];
                     ulong id = ulong.Parse(idStr);
                     return _guild.GetRole(id);
                 }
@@ -44,10 +50,7 @@ namespace Discord_Bot.RolesNS
         {
             if (!File.Exists(guildFileLoc))
             {
-                DiscordBot.Logger.Log(Level.Verbose, $"Creating Guild file at {guildFileLoc}");
-                StreamWriter writer = File.CreateText(guildFileLoc);
-                writer.Write("{}");
-                writer.Close();
+                WriteGuildTemplate(guildFileLoc);
             }
 
             _guild = socketGuild;
@@ -60,12 +63,17 @@ namespace Discord_Bot.RolesNS
             // TODO might be wrong saving this ~ might be appending to the file
             if (!File.Exists(_guildFileLoc))
             {
-                DiscordBot.Logger.Log(Level.Verbose, $"Creating Guild file at {_guildFileLoc}");
-                StreamWriter writer = File.CreateText(_guildFileLoc);
-                writer.Write("{}");
-                writer.Close();
+                WriteGuildTemplate(_guildFileLoc);
             }
             File.WriteAllText(_guildFileLoc, _rolesFile.ToString());
+        }
+        
+        private void WriteGuildTemplate(string fileLoc)
+        {
+            DiscordBot.Logger.Log(Level.Verbose, $"Creating Guild file at {fileLoc}");
+            StreamWriter writer = File.CreateText(fileLoc);
+            writer.Write(FileTemplate);
+            writer.Close();
         }
     }
 }
