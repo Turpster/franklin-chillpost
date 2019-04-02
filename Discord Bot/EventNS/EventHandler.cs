@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace Discord_Bot.EventNS
             return Task.CompletedTask;
         }
         
+        List<ulong> timeoutMessageIds = new List<ulong>();
         public Task DiscordMessageRecieved(SocketMessage message)
         {
             if (message.Content.StartsWith(Executor.CommandPrefix.ToString()))
@@ -38,28 +40,39 @@ namespace Discord_Bot.EventNS
                 _discordBot.CommandExecutor.OnCommand(message, command, args.ToArray());
             }
 
-
             if (message.Author.GetType() == typeof(SocketGuildUser))
             {
                 SocketGuildUser guildUser = (SocketGuildUser) message.Author;
-                if (!guildUser.IsBot)
+
+
+                if (!timeoutMessageIds.Contains(guildUser.Id))
                 {
-                    Guild guild = _discordBot.GuildManager.GetGuild(guildUser.Guild);
-
-                    GuildRankManager rankManager = guild.RankManager;
-
-                    SocketRole oldRank = rankManager.GetRank(guild.RankManager.GetUserPoints(guildUser.Id));
-
-                    rankManager.SetRolePoints(guildUser.Id,
-                        guild.RankManager.GetUserPoints(guildUser.Id) + (uint) message.Content.Length);
-
-                    SocketRole newRank = rankManager.GetRank(guild.RankManager.GetUserPoints(guildUser.Id));
-
-                    if (oldRank.Id != newRank.Id)
+                    if (!guildUser.IsBot)
                     {
-                        message.Channel.SendMessageAsync($"<@{message.Author.Id}> has been ranked up to {newRank.Name}!");
-                        guildUser.AddRoleAsync(newRank);
-                        guildUser.RemoveRoleAsync(oldRank);
+                        Guild guild = _discordBot.GuildManager.GetGuild(guildUser.Guild);
+
+                        GuildRankManager rankManager = guild.RankManager;
+
+                        SocketRole oldRank = rankManager.GetRank(guild.RankManager.GetUserPoints(guildUser.Id));
+
+                        rankManager.SetRolePoints(guildUser.Id,
+                            guild.RankManager.GetUserPoints(guildUser.Id) + (uint) message.Content.Length);
+
+                        SocketRole newRank = rankManager.GetRank(guild.RankManager.GetUserPoints(guildUser.Id));
+
+                        if (oldRank.Id != newRank.Id)
+                        {
+                            message.Channel.SendMessageAsync(
+                                $"<@{message.Author.Id}> has been ranked up to {newRank.Name}!");
+                            guildUser.AddRoleAsync(newRank);
+                            guildUser.RemoveRoleAsync(oldRank);
+                        }
+
+                        timeoutMessageIds.Add(guildUser.Id);
+                        _discordBot.Scheduler.AddTask(new SchedulerNS.Task(() =>
+                        {
+                            timeoutMessageIds.Remove(guildUser.Id); 
+                        }, new TimeSpan(0, 0, 0, message.Content.Length)));
                     }
                 }
 

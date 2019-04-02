@@ -204,6 +204,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GuildNS\Guild.cs" />
     <Compile Include="GuildNS\GuildManager.cs" />
+    <Compile Include="SchedulerNS\Task.cs" />
+    <Compile Include="SchedulerNS\TaskScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

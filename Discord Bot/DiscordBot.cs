@@ -10,6 +10,7 @@ using Discord_Bot.CommandNS;
 using Discord_Bot.GuildNS;
 using Discord_Bot.LoggerNS;
 using EventHandler = Discord_Bot.EventNS.EventHandler;
+using TaskScheduler = Discord_Bot.SchedulerNS.TaskScheduler;
 
 namespace Discord_Bot
 {
@@ -19,6 +20,8 @@ namespace Discord_Bot
         public Executor CommandExecutor;
         public EventHandler EventHandler;
         public GuildManager GuildManager;
+
+        public TaskScheduler Scheduler;
 
         public static readonly Logger Logger = new Logger();
         
@@ -48,6 +51,7 @@ namespace Discord_Bot
 
         public DiscordBot()
         {
+            Scheduler = new TaskScheduler();
             GuildManager = new GuildManager();
             client = new DiscordSocketClient();
             CommandExecutor = new Executor(this);
