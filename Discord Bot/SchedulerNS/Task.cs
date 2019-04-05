@@ -7,10 +7,10 @@ namespace Discord_Bot.SchedulerNS
         Action Action { get; }
 
         public bool Executed = false;
-        
+
         protected internal TimeSpan _timeSpan;
         public TimeSpan TimeSpan => _timeSpan;
-        
+
         public Task(Action action, TimeSpan timeSpan)
         {
             Action = action;

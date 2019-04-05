@@ -1,4 +1,3 @@
-
 using System;
 using System.Data;
 using System.Threading.Tasks;
@@ -6,7 +5,6 @@ using Discord;
 
 namespace Discord_Bot.LoggerNS
 {
-
     public class Level
     {
         public static Level Success = new Level(-1, "Success", LoggerFormat.Green);
@@ -16,18 +14,18 @@ namespace Discord_Bot.LoggerNS
         public static Level Critical = new Level(3, "Critical", LoggerFormat.Red);
         public static Level Verbose = new Level(4, "Verbose", LoggerFormat.LightMagenta); //TODO Add functionality
         public static Level Debug = new Level(5, "Debug", LoggerFormat.LightMagenta); //TODO Add functionality
-        
+
         public int Rank { get; }
         public string Name { get; }
         public LoggerFormat LoggerFormat { get; }
-        
+
         public Level(int rank, string name, LoggerFormat loggerFormat)
         {
             Rank = rank;
             Name = name;
             LoggerFormat = loggerFormat;
         }
-        
+
         public static Level LogSeverityToLevel(LogSeverity logSeverity)
         {
             switch (logSeverity)
@@ -50,14 +48,15 @@ namespace Discord_Bot.LoggerNS
         }
 
         public override string ToString() => Name;
-    }   
-    
+    }
+
     public class Logger
     {
-        public void Log(Level level, string message, Exception exception=null)
+        public void Log(Level level, string message, Exception exception = null)
         {
-            LoggerFormat.Write(String.Format("[{0:G}] [{1}]: {2}", DateTime.Now, 
-                LoggerFormat.Bold + "" + level.LoggerFormat + level.Name + LoggerFormat.Reset, message + LoggerFormat.Reset) + "\n");
+            LoggerFormat.Write(String.Format("[{0:G}] [{1}]: {2}", DateTime.Now,
+                                   LoggerFormat.Bold + "" + level.LoggerFormat + level.Name + LoggerFormat.Reset,
+                                   message + LoggerFormat.Reset) + "\n");
 
             if (exception != null)
             {

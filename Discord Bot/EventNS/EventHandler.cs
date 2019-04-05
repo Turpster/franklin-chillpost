@@ -13,21 +13,23 @@ namespace Discord_Bot.EventNS
     public class EventHandler
     {
         private DiscordBot _discordBot;
-        
+
         public EventHandler(DiscordBot discordBot)
         {
             _discordBot = discordBot;
-            
+
             SetupMethods();
         }
 
         public Task DiscordNetLog(LogMessage logMessage)
         {
-            DiscordBot.Logger.Log(Level.LogSeverityToLevel(logMessage.Severity), logMessage.Message, logMessage.Exception);
+            DiscordBot.Logger.Log(Level.LogSeverityToLevel(logMessage.Severity), logMessage.Message,
+                logMessage.Exception);
             return Task.CompletedTask;
         }
-        
+
         List<ulong> timeoutMessageIds = new List<ulong>();
+
         public Task DiscordMessageRecieved(SocketMessage message)
         {
             if (message.Content.StartsWith(Executor.CommandPrefix.ToString()))
@@ -36,7 +38,7 @@ namespace Discord_Bot.EventNS
                 List<string> args = wholeCommand.Substring(1).Split(' ').ToList();
                 string command = args[0];
                 args.RemoveAt(0);
-                
+
                 _discordBot.CommandExecutor.OnCommand(message, command, args.ToArray());
             }
 
@@ -69,15 +71,13 @@ namespace Discord_Bot.EventNS
                         }
 
                         timeoutMessageIds.Add(guildUser.Id);
-                        _discordBot.Scheduler.AddTask(new SchedulerNS.Task(() =>
-                        {
-                            timeoutMessageIds.Remove(guildUser.Id); 
-                        }, new TimeSpan(0, 0, 0, message.Content.Length)));
+                        _discordBot.Scheduler.AddTask(new SchedulerNS.Task(
+                            () => { timeoutMessageIds.Remove(guildUser.Id); },
+                            new TimeSpan(0, 0, 0, message.Content.Length)));
                     }
                 }
-
             }
-            
+
             return Task.CompletedTask;
         }
 
@@ -88,8 +88,8 @@ namespace Discord_Bot.EventNS
             _discordBot.GuildManager.AddGuild(socketGuild);
             return Task.CompletedTask;
         }
-        
-        
+
+
         private void SetupMethods()
         {
             _discordBot.client.Log += DiscordNetLog;

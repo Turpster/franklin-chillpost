@@ -13,18 +13,19 @@ namespace Discord_Bot
     {
         private SocketGuild _socketGuild;
         private GuildFile _guildFile;
-        
+
         private KeyValuePair<SocketRole, uint>[] Ranks
         {
             get
             {
                 JProperty[] rankTokens = ((JContainer) _guildFile.ObjGuildFile["ranks"]).Values<JProperty>().ToArray();
-                    
+
                 KeyValuePair<SocketRole, uint>[] ranks = new KeyValuePair<SocketRole, uint>[rankTokens.Length];
 
                 for (int i = 0; i < rankTokens.Length; i++)
                 {
-                    ranks[i] = new KeyValuePair<SocketRole, uint>(_socketGuild.GetRole(ulong.Parse(rankTokens[i].Name)), uint.Parse(rankTokens[i].Value.ToString())); 
+                    ranks[i] = new KeyValuePair<SocketRole, uint>(_socketGuild.GetRole(ulong.Parse(rankTokens[i].Name)),
+                        uint.Parse(rankTokens[i].Value.ToString()));
                 }
 
                 return ranks;
@@ -43,9 +44,10 @@ namespace Discord_Bot
                 container.Add(new JProperty(roleId.ToString(), points.ToString()));
                 _guildFile.ObjGuildFile["ranks"] = container;
             }
+
             _guildFile.Save();
         }
-        
+
         public void SetRolePoints(ulong guildUserId, uint points)
         {
             JProperty[] properties = ((JContainer) _guildFile.ObjGuildFile["users"]).Values<JProperty>().ToArray();
@@ -60,7 +62,7 @@ namespace Discord_Bot
                     break;
                 }
             }
-            
+
             if (isUserInFile)
             {
                 _guildFile.ObjGuildFile["users"][guildUserId.ToString()] = points.ToString();
@@ -71,9 +73,10 @@ namespace Discord_Bot
                 container.Add(new JProperty(guildUserId.ToString(), points.ToString()));
                 _guildFile.ObjGuildFile["users"] = container;
             }
+
             _guildFile.Save();
         }
-        
+
         public GuildRankManager(GuildFile guildFile)
         {
             _guildFile = guildFile;
@@ -83,11 +86,12 @@ namespace Discord_Bot
         public uint GetUserPoints(ulong userId)
         {
             JContainer container = (JContainer) _guildFile.ObjGuildFile["users"];
-            
+
             if (container[userId.ToString()] != null)
             {
                 return uint.Parse((string) container[userId.ToString()]);
             }
+
             container.Add(new JProperty(userId.ToString(), 0));
             _guildFile.ObjGuildFile["users"] = container;
             _guildFile.Save();
@@ -103,12 +107,9 @@ namespace Discord_Bot
                 {
                     return Rank.Key;
                 }
-                
             }
-            
+
             throw new DataException($"Invalid points ~ points: {points} is too small for the lowest rank");
         }
-
-
     }
 }
